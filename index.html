@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Portfolio">
+    <link rel="manifest" href="manifest.json">
+    <title>Portfolio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        :root {
+            /* iOS System Colors */
+            --system-blue: #007AFF;
+            --system-green: #34C759;
+            --system-red: #FF3B30;
+            --system-orange: #FF9500;
+            --system-gray: #8E8E93;
+            --system-gray2: #AEAEB2;
+            --system-gray3: #C7C7CC;
+            --system-gray4: #D1D1D6;
+            --system-gray5: #E5E5EA;
+            --system-gray6: #F2F2F7;
+            
+            /* Dark Mode Backgrounds */
+            --bg-primary: #000000;
+            --bg-secondary: #1C1C1E;
+            --bg-tertiary: #2C2C2E;
+            --bg-grouped: #000000;
+            
+            /* Labels */
+            --label-primary: #FFFFFF;
+            --label-secondary: rgba(235, 235, 245, 0.6);
+            --label-tertiary: rgba(235, 235, 245, 0.3);
+            
+            /* Fills */
+            --fill-primary: rgba(120, 120, 128, 0.36);
+            --fill-secondary: rgba(120, 120, 128, 0.32);
+            --fill-tertiary: rgba(118, 118, 128, 0.24);
+            
+            /* Separators */
+            --separator: rgba(84, 84, 88, 0.65);
+        }
+        
+        @supports (font: -apple-system-body) {
+            body {
+                font: -apple-system-body;
+            }
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', sans-serif;
+            background: var(--bg-grouped);
+            color: var(--label-primary);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+            padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
+        }
+        
+        .app-container {
+            max-width: 428px;
+            margin: 0 auto;
+            padding: 0;
+        }
+        
+        /* Navigation Bar Style */
+        .nav-bar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+            background: rgba(0, 0, 0, 0.7);
+            border-bottom: 0.5px solid var(--separator);
+            padding: 20px 16px 12px;
+        }
+        
+        .nav-bar h1 {
+            font-size: 34px;
+            font-weight: 700;
+            letter-spacing: 0.37px;
+            line-height: 41px;
+        }
+        
+        .nav-subtitle {
+            font-size: 13px;
+            font-weight: 400;
+            color: var(--label-secondary);
+            margin-top: 2px;
+        }
+        
+        /* Market Status */
+        .market-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin: 12px 16px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        
+        .market-open {
+            background: rgba(52, 199, 89, 0.15);
+            color: var(--system-green);
+        }
+        
+        .market-closed {
+            background: rgba(255, 59, 48, 0.15);
+            color: var(--system-red);
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* Controls */
+        .controls {
+            padding: 8px 16px 16px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .btn-primary {
+            flex: 1;
+            min-width: 150px;
+            background: var(--system-blue);
+            color: white;
+            border: none;
+            padding: 13px 20px;
+            border-radius: 10px;
+            font-size: 17px;
+            font-weight: 600;
+            letter-spacing: -0.41px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn-primary:active {
+            transform: scale(0.97);
+            opacity: 0.8;
+        }
+        
+        .toggle-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--fill-tertiary);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 8px 14px;
+            border-radius: 10px;
+        }
+        
+        .toggle-group label {
+            font-size: 15px;
+            font-weight: 400;
+            color: var(--label-primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .toggle-group input[type="checkbox"] {
+            width: 51px;
+            height: 31px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: var(--fill-tertiary);
+            border-radius: 16px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .toggle-group input[type="checkbox"]::before {
+            content: '';
+            position: absolute;
+            width: 27px;
+            height: 27px;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            background: white;
+            transition: transform 0.3s;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15), 0 3px 1px rgba(0, 0, 0, 0.06);
+        }
+        
+        .toggle-group input[type="checkbox"]:checked {
+            background: var(--system-green);
+        }
+        
+        .toggle-group input[type="checkbox"]:checked::before {
+            transform: translateX(20px);
+        }
+        
+        .toggle-group select {
+            background: transparent;
+            color: var(--label-primary);
+            border: none;
+            font-size: 15px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        
+        /* Card System */
+        .section {
+            padding: 0 16px 16px;
+        }
+        
+        .card {
+            background: var(--fill-tertiary);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+        
+        .card-header {
+            padding: 16px;
+            border-bottom: 0.5px solid var(--separator);
+        }
+        
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 0.38px;
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5px;
+            background: var(--separator);
+        }
+        
+        .stat-cell {
+            background: var(--fill-tertiary);
+            padding: 20px;
+        }
+        
+        .stat-label {
+            font-size: 13px;
+            font-weight: 400;
+            color: var(--label-secondary);
+            margin-bottom: 4px;
+            letter-spacing: -0.08px;
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: 600;
+            letter-spacing: 0.36px;
+            font-variant-numeric: tabular-nums;
+        }
+        
+        /* SPY Comparison Badge */
+        .spy-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--fill-secondary);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 6px;
+        }
+        
+        /* Performance Indicators */
+        .perf-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 8px;
+            padding: 8px;
+            background: var(--fill-secondary);
+            border-radius: 8px;
+            font-size: 13px;
+        }
+        
+        .perf-label {
+            color: var(--label-secondary);
+            flex: 1;
+        }
+        
+        .perf-value {
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+        }
+        
+        /* Client List */
+        .client-item {
+            background: var(--fill-tertiary);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border-radius: 16px;
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+        
+        .client-content {
+            padding: 16px;
+            cursor: pointer;
+        }
+        
+        .client-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .client-name {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 0.38px;
+        }
+        
+        .client-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .icon-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--fill-secondary);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .icon-btn:active {
+            transform: scale(0.9);
+            opacity: 0.6;
+        }
+        
+        .client-amount {
+            font-size: 15px;
+            color: var(--label-secondary);
+            margin-bottom: 8px;
+        }
+        
+        .client-perf {
+            font-size: 34px;
+            font-weight: 700;
+            letter-spacing: 0.37px;
+            font-variant-numeric: tabular-nums;
+        }
+        
+        /* Investment Item */
+        .investment-item {
+            border-top: 0.5px solid var(--separator);
+            padding: 16px;
+        }
+        
+        .investment-item:first-child {
+            border-top: none;
+        }
+        
+        .inv-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        
+        .inv-ticker {
+            font-size: 22px;
+            font-weight: 600;
+            letter-spacing: 0.35px;
+        }
+        
+        .inv-daily {
+            font-size: 13px;
+            font-weight: 500;
+            opacity: 0.8;
+        }
+        
+        .inv-details {
+            font-size: 13px;
+            color: var(--label-secondary);
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+        
+        .inv-values {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+        
+        .inv-current {
+            font-size: 28px;
+            font-weight: 600;
+            letter-spacing: 0.36px;
+            font-variant-numeric: tabular-nums;
+        }
+        
+        .inv-perc {
+            font-size: 17px;
+            font-weight: 500;
+            margin-top: 2px;
+        }
+        
+        .inv-pnl-label {
+            font-size: 11px;
+            color: var(--label-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-bottom: 2px;
+        }
+        
+        .inv-pnl-value {
+            font-size: 20px;
+            font-weight: 600;
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
+        
+        /* Gain Split Display */
+        .gain-split {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+            padding: 8px;
+            background: var(--fill-secondary);
+            border-radius: 8px;
+        }
+        
+        .gain-item {
+            flex: 1;
+        }
+        
+        .gain-item-label {
+            font-size: 11px;
+            color: var(--label-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-bottom: 2px;
+        }
+        
+        .gain-item-value {
+            font-size: 15px;
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+        }
+        
+        /* History Grid */
+        .history-section {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 0.5px solid var(--separator);
+        }
+        
+        .history-title {
+            font-size: 13px;
+            color: var(--label-secondary);
+            margin-bottom: 12px;
+        }
+        
+        .history-scroll {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        
+        .history-scroll::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .history-day {
+            min-width: 52px;
+            text-align: center;
+            padding: 10px 8px;
+            background: var(--fill-secondary);
+            border-radius: 10px;
+        }
+        
+        .history-date {
+            font-size: 11px;
+            color: var(--label-tertiary);
+            margin-bottom: 4px;
+        }
+        
+        .history-value {
+            font-size: 15px;
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 1000;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 0;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: var(--bg-secondary);
+            border-radius: 16px 16px 0 0;
+            width: 100%;
+            max-width: 428px;
+            padding: 20px 16px calc(env(safe-area-inset-bottom, 0px) + 20px);
+            animation: slideUp 0.3s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-header {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-label {
+            font-size: 13px;
+            color: var(--label-secondary);
+            margin-bottom: 8px;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: -0.08px;
+        }
+        
+        .form-input {
+            width: 100%;
+            background: var(--fill-tertiary);
+            border: 0.5px solid var(--separator);
+            border-radius: 10px;
+            padding: 14px 16px;
+            color: var(--label-primary);
+            font-size: 17px;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--system-blue);
+            background: var(--fill-secondary);
+        }
+        
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: calc(env(safe-area-inset-bottom, 0px) + 24px);
+            right: 24px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--system-blue);
+            border: none;
+            color: white;
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.4);
+            z-index: 50;
+            transition: all 0.2s;
+        }
+        
+        .fab:active {
+            transform: scale(0.9);
+        }
+        
+        /* Utility Classes */
+        .color-green { color: var(--system-green); }
+        .color-red { color: var(--system-red); }
+        .color-gray { color: var(--system-gray); }
+        
+        .text-right { text-align: right; }
+        .mt-1 { margin-top: 8px; }
+        .mb-2 { margin-bottom: 16px; }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 40px;
+        }
+        
+        .empty-icon {
+            font-size: 56px;
+            margin-bottom: 16px;
+            opacity: 0.3;
+        }
+        
+        .empty-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .empty-subtitle {
+            font-size: 15px;
+            color: var(--label-secondary);
+        }
+        
+        /* Top Performers */
+        .top-performers {
+            padding: 12px 16px;
+            background: var(--fill-tertiary);
+            border-radius: 12px;
+            margin: 12px 16px;
+        }
+        
+        .top-performers-title {
+            font-size: 13px;
+            color: var(--label-secondary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+        
+        .performer-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+        }
+        
+        .performer-name {
+            font-size: 15px;
+            font-weight: 500;
+        }
+        
+        .performer-value {
+            font-size: 15px;
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Navigation -->
+        <div class="nav-bar">
+            <h1 id="navTitle">Portfolio</h1>
+            <div class="nav-subtitle" id="navSubtitle">Gestión de inversiones</div>
+        </div>
+        
+        <!-- Market Status -->
+        <div id="marketStatus"></div>
+        
+        <!-- Controls -->
+        <div class="controls">
+            <button class="btn-primary" onclick="updateAll()">🔄 Actualizar</button>
+            <div class="toggle-group">
+                <label>
+                    <input type="checkbox" id="autoToggle" onchange="toggleAuto()">
+                </label>
+                <select id="autoInterval" onchange="updateInterval()">
+                    <option value="60">1h</option>
+                    <option value="30">30m</option>
+                    <option value="15">15m</option>
+                    <option value="5">5m</option>
+                </select>
+            </div>
+        </div>
+        
+        <!-- Top Performers (Solo en vista general) -->
+        <div id="topPerformersSection"></div>
+        
+        <!-- Main Views -->
+        <div id="clientsView">
+            <div class="section">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Resumen General</div>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-cell">
+                            <div class="stat-label">Invertido</div>
+                            <div class="stat-value" id="totalInvested">$0</div>
+                        </div>
+                        <div class="stat-cell">
+                            <div class="stat-label">Valor Actual</div>
+                            <div class="stat-value" id="totalValue">$0</div>
+                        </div>
+                        <div class="stat-cell">
+                            <div class="stat-label">Rendimiento</div>
+                            <div class="stat-value" id="totalPerf">0%</div>
+                        </div>
+                        <div class="stat-cell">
+                            <div class="stat-label">Clientes</div>
+                            <div class="stat-value" id="totalClients">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section" id="clientsList"></div>
+            
+            <button class="fab" onclick="openAddClient()">+</button>
+        </div>
+        
+        <div id="detailView" style="display:none;">
+            <div class="section">
+                <button class="btn-primary" onclick="showClients()">← Volver</button>
+            </div>
+            <div id="detailContent"></div>
+            <button class="fab" onclick="openAddInvestment()">+</button>
+        </div>
+    </div>
+    
+    <!-- Modals -->
+    <div id="modalClient" class="modal" onclick="if(event.target===this) this.classList.remove('active')">
+        <div class="modal-content">
+            <div class="modal-header">Nuevo Cliente</div>
+            <form onsubmit="addClient(event)">
+                <div class="form-group">
+                    <label class="form-label">Nombre</label>
+                    <input type="text" id="clientName" class="form-input" required placeholder="Ej: Juan Pérez">
+                </div>
+                <button type="submit" class="btn-primary" style="width:100%">Crear Cliente</button>
+            </form>
+        </div>
+    </div>
+    
+    <div id="modalInvestment" class="modal" onclick="if(event.target===this) this.classList.remove('active')">
+        <div class="modal-content">
+            <div class="modal-header">Nueva Inversión</div>
+            <form onsubmit="addInvestment(event)">
+                <div class="form-group">
+                    <label class="form-label">Ticker</label>
+                    <input type="text" id="invTicker" class="form-input" required style="text-transform:uppercase" placeholder="AAPL">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Capital (USD)</label>
+                    <input type="number" id="invAmount" class="form-input" step="0.01" required placeholder="1000.00">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Fecha</label>
+                    <input type="date" id="invDate" class="form-input" required>
+                </div>
+                <button type="submit" class="btn-primary" style="width:100%">Guardar Inversión</button>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        const API_KEY = 'd7fq5l9r01qqb8rh6vagd7fq5l9r01qqb8rh6vb0';
+        let data = {clients: [], spyData: null};
+        let currentClient = null;
+        let autoTimer = null;
+        let autoEnabled = false;
+        let autoMinutes = 60;
+        
+        function load() {
+            const saved = localStorage.getItem('portfolio');
+            if (saved) data = JSON.parse(saved);
+            if (!data.spyData) data.spyData = null;
+            render();
+        }
+        
+        function save() {
+            localStorage.setItem('portfolio', JSON.stringify(data));
+        }
+        
+        function render() {
+            if (currentClient) {
+                renderDetail();
+            } else {
+                renderClients();
+                renderSummary();
+                renderTopPerformers();
+            }
+        }
+        
+        function renderSummary() {
+            let invested = 0, value = 0;
+            data.clients.forEach(c => {
+                c.investments?.forEach(inv => {
+                    invested += inv.amount;
+                    value += inv.currentValue || inv.amount;
+                });
+            });
+            const perf = invested > 0 ? ((value - invested) / invested * 100) : 0;
+            
+            document.getElementById('totalInvested').textContent = `$${invested.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('totalValue').textContent = `$${value.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('totalClients').textContent = data.clients.length;
+            
+            const perfEl = document.getElementById('totalPerf');
+            perfEl.textContent = `${perf >= 0 ? '+' : ''}${perf.toFixed(2)}%`;
+            perfEl.className = `stat-value ${perf >= 0 ? 'color-green' : 'color-red'}`;
+        }
+        
+        function renderTopPerformers() {
+            let allInvestments = [];
+            data.clients.forEach(c => {
+                c.investments?.forEach(inv => {
+                    allInvestments.push({...inv, clientName: c.name});
+                });
+            });
+            
+            if (allInvestments.length === 0) {
+                document.getElementById('topPerformersSection').innerHTML = '';
+                return;
+            }
+            
+            allInvestments.sort((a, b) => (b.stockPercentChange || 0) - (a.stockPercentChange || 0));
+            const best = allInvestments[0];
+            const worst = allInvestments[allInvestments.length - 1];
+            const inGreen = allInvestments.filter(inv => (inv.stockPercentChange || 0) >= 0).length;
+            
+            const html = `
+                <div class="top-performers">
+                    <div class="top-performers-title">Resumen de Inversiones</div>
+                    <div class="performer-row">
+                        <span class="performer-name">📈 Mejor: ${best.ticker}</span>
+                        <span class="performer-value color-green">${best.stockPercentChange >= 0 ? '+' : ''}${(best.stockPercentChange || 0).toFixed(2)}%</span>
+                    </div>
+                    <div class="performer-row">
+                        <span class="performer-name">📉 Peor: ${worst.ticker}</span>
+                        <span class="performer-value color-red">${worst.stockPercentChange >= 0 ? '+' : ''}${(worst.stockPercentChange || 0).toFixed(2)}%</span>
+                    </div>
+                    <div class="performer-row">
+                        <span class="performer-name">✅ En verde</span>
+                        <span class="performer-value color-gray">${inGreen}/${allInvestments.length} (${((inGreen/allInvestments.length)*100).toFixed(0)}%)</span>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('topPerformersSection').innerHTML = html;
+        }
+        
+        function renderClients() {
+            const list = document.getElementById('clientsList');
+            
+            if (data.clients.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📊</div>
+                        <div class="empty-title">Sin clientes</div>
+                        <div class="empty-subtitle">Toca + para agregar tu primer cliente</div>
+                    </div>
+                `;
+                document.getElementById('topPerformersSection').innerHTML = '';
+                return;
+            }
+            
+            list.innerHTML = data.clients.map(c => {
+                let invested = 0, value = 0;
+                c.investments?.forEach(inv => {
+                    invested += inv.amount;
+                    value += inv.currentValue || inv.amount;
+                });
+                const perf = invested > 0 ? ((value - invested) / invested * 100) : 0;
+                const perfColor = perf >= 0 ? 'color-green' : 'color-red';
+                
+                return `
+                    <div class="client-item">
+                        <div class="client-content" onclick="viewClient('${c.id}')">
+                            <div class="client-header">
+                                <div class="client-name">${c.name}</div>
+                                <div class="client-actions" onclick="event.stopPropagation()">
+                                    <button class="icon-btn" onclick="editClient('${c.id}')">✏️</button>
+                                    <button class="icon-btn" onclick="deleteClient('${c.id}')">🗑️</button>
+                                </div>
+                            </div>
+                            <div class="client-amount">Invertido: $${invested.toLocaleString('en-US', {minimumFractionDigits: 2})}</div>
+                            <div class="client-perf ${perfColor}">${perf >= 0 ? '+' : ''}${perf.toFixed(2)}%</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        async function getSPYPerformance() {
+            if (data.spyData && data.spyData.lastUpdate) {
+                const lastUpdate = new Date(data.spyData.lastUpdate);
+                const now = new Date();
+                const hoursSince = (now - lastUpdate) / (1000 * 60 * 60);
+                
+                if (hoursSince < 1) {
+                    return data.spyData.performance;
+                }
+            }
+            
+            try {
+                const url = `https://finnhub.io/api/v1/quote?symbol=SPY&token=${API_KEY}`;
+                const res = await fetch(url);
+                const quote = await res.json();
+                
+                if (quote && quote.c && quote.pc) {
+                    const spyPerf = ((quote.c - quote.pc) / quote.pc) * 100;
+                    data.spyData = {
+                        performance: spyPerf,
+                        lastUpdate: new Date().toISOString()
+                    };
+                    save();
+                    return spyPerf;
+                }
+            } catch (error) {
+                console.error('Error obteniendo SPY:', error);
+            }
+            
+            return null;
+        }
+        
+        function renderDetail() {
+            const client = data.clients.find(c => c.id === currentClient);
+            if (!client) return;
+            
+            document.getElementById('navTitle').textContent = client.name;
+            document.getElementById('navSubtitle').textContent = 'Inversiones';
+            document.getElementById('topPerformersSection').innerHTML = '';
+            
+            let invested = 0, value = 0;
+            client.investments?.forEach(inv => {
+                invested += inv.amount;
+                value += inv.currentValue || inv.amount;
+            });
+            const perf = invested > 0 ? ((value - invested) / invested * 100) : 0;
+            
+            const now = new Date();
+            const utcHours = now.getUTCHours();
+            const utcMinutes = now.getUTCMinutes();
+            const utcDay = now.getUTCDay();
+            const timeInMinutes = utcHours * 60 + utcMinutes;
+            const marketOpen = 13 * 60 + 30;
+            const marketClose = 20 * 60;
+            const isWeekday = utcDay >= 1 && utcDay <= 5;
+            const isDuringHours = timeInMinutes >= marketOpen && timeInMinutes < marketClose;
+            const isOpen = isWeekday && isDuringHours;
+            const timeLabel = isOpen ? 'hoy' : 'último cierre';
+            
+            // SPY comparison
+            let spyComparison = '';
+            if (data.spyData && data.spyData.performance !== null) {
+                const diff = perf - data.spyData.performance;
+                const diffColor = diff >= 0 ? 'color-green' : 'color-red';
+                const arrow = diff >= 0 ? '↑' : '↓';
+                spyComparison = `
+                    <div class="spy-badge ${diffColor}">
+                        vs SPY ${arrow} ${Math.abs(diff).toFixed(2)}%
+                    </div>
+                `;
+            }
+            
+            const html = `
+                <div class="section">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Resumen</div>
+                        </div>
+                        <div class="stats-grid">
+                            <div class="stat-cell">
+                                <div class="stat-label">Invertido</div>
+                                <div class="stat-value">$${invested.toLocaleString('en-US', {minimumFractionDigits: 2})}</div>
+                            </div>
+                            <div class="stat-cell">
+                                <div class="stat-label">Valor Actual</div>
+                                <div class="stat-value">$${value.toLocaleString('en-US', {minimumFractionDigits: 2})}</div>
+                            </div>
+                            <div class="stat-cell">
+                                <div class="stat-label">% Promedio</div>
+                                <div class="stat-value ${perf >= 0 ? 'color-green' : 'color-red'}">
+                                    ${perf >= 0 ? '+' : ''}${perf.toFixed(2)}%
+                                </div>
+                                ${spyComparison}
+                            </div>
+                            <div class="stat-cell">
+                                <div class="stat-label">PnL Total</div>
+                                <div class="stat-value ${(value - invested) >= 0 ? 'color-green' : 'color-red'}">
+                                    ${(value - invested) >= 0 ? '+' : ''}$${Math.abs(value - invested).toLocaleString('en-US', {minimumFractionDigits: 2})}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    ${(client.investments || []).length === 0 ? `
+                        <div class="empty-state">
+                            <div class="empty-icon">💼</div>
+                            <div class="empty-title">Sin inversiones</div>
+                            <div class="empty-subtitle">Toca + para agregar tu primera inversión</div>
+                        </div>
+                    ` : `
+                        <div class="card">
+                            ${(client.investments || []).map(inv => {
+                                const perc = inv.stockPercentChange || 0;
+                                const color = perc >= 0 ? 'color-green' : 'color-red';
+                                const dailyColor = (inv.dailyChange || 0) >= 0 ? 'color-green' : 'color-red';
+                                const pnl = (inv.currentValue || inv.amount) - inv.amount;
+                                
+                                // Calcular day gain en dólares
+                                const dayGainPercent = inv.dailyChange || 0;
+                                const dayGainDollars = inv.currentValue * (dayGainPercent / 100);
+                                
+                                // Indicator
+                                let indicator = '➡️';
+                                if (perc > 1) indicator = '📈';
+                                else if (perc < -1) indicator = '📉';
+                                
+                                return `
+                                    <div class="investment-item">
+                                        <div class="inv-header">
+                                            <div>
+                                                <div class="inv-ticker">${indicator} ${inv.ticker}</div>
+                                                <div class="inv-daily ${dailyColor}">${(inv.dailyChange || 0) >= 0 ? '+' : ''}${(inv.dailyChange || 0).toFixed(2)}% ${timeLabel}</div>
+                                            </div>
+                                            <div class="client-actions">
+                                                <button class="icon-btn" onclick="editInvestment('${inv.id}')">✏️</button>
+                                                <button class="icon-btn" onclick="deleteInvestment('${inv.id}')">🗑️</button>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="inv-details">
+                                            Invertido: $${inv.amount.toLocaleString('en-US', {minimumFractionDigits: 2})} • 
+                                            Precio: $${(inv.currentPrice || 0).toFixed(2)} • 
+                                            Base: $${(inv.basePrice || 0).toFixed(2)}
+                                        </div>
+                                        
+                                        <div class="inv-values">
+                                            <div>
+                                                <div class="inv-current ${color}">$${(inv.currentValue || inv.amount).toLocaleString('en-US', {minimumFractionDigits: 2})}</div>
+                                                <div class="inv-perc ${color}">${perc >= 0 ? '+' : ''}${perc.toFixed(2)}% total</div>
+                                            </div>
+                                            <div class="text-right">
+                                                <div class="inv-pnl-label">PNL</div>
+                                                <div class="inv-pnl-value ${color}">${pnl >= 0 ? '+' : ''}$${Math.abs(pnl).toLocaleString('en-US', {minimumFractionDigits: 2})}</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="gain-split">
+                                            <div class="gain-item">
+                                                <div class="gain-item-label">Ganancia Hoy</div>
+                                                <div class="gain-item-value ${dailyColor}">
+                                                    ${dayGainDollars >= 0 ? '+' : ''}$${Math.abs(dayGainDollars).toFixed(2)}
+                                                </div>
+                                            </div>
+                                            <div class="gain-item">
+                                                <div class="gain-item-label">Ganancia Total</div>
+                                                <div class="gain-item-value ${color}">
+                                                    ${pnl >= 0 ? '+' : ''}$${Math.abs(pnl).toFixed(2)}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        ${inv.history && inv.history.length > 0 ? `
+                                            <div class="history-section">
+                                                <div class="history-title">Últimos ${inv.history.length} días</div>
+                                                <div class="history-scroll">
+                                                    ${inv.history.map(h => {
+                                                        const d = new Date(h.date);
+                                                        const c = h.perc >= 0 ? 'color-green' : 'color-red';
+                                                        return `
+                                                            <div class="history-day">
+                                                                <div class="history-date">${d.getDate()}/${d.getMonth()+1}</div>
+                                                                <div class="history-value ${c}">${h.perc >= 0 ? '+' : ''}${h.perc.toFixed(1)}%</div>
+                                                            </div>
+                                                        `;
+                                                    }).join('')}
+                                                </div>
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    `}
+                </div>
+            `;
+            
+            document.getElementById('detailContent').innerHTML = html;
+        }
+        
+        function viewClient(id) {
+            currentClient = id;
+            document.getElementById('clientsView').style.display = 'none';
+            document.getElementById('detailView').style.display = 'block';
+            render();
+        }
+        
+        function showClients() {
+            currentClient = null;
+            document.getElementById('navTitle').textContent = 'Portfolio';
+            document.getElementById('navSubtitle').textContent = 'Gestión de inversiones';
+            document.getElementById('clientsView').style.display = 'block';
+            document.getElementById('detailView').style.display = 'none';
+            render();
+        }
+        
+        function addClient(e) {
+            e.preventDefault();
+            const name = document.getElementById('clientName').value;
+            data.clients.push({
+                id: Date.now().toString(),
+                name: name,
+                investments: []
+            });
+            save();
+            document.getElementById('modalClient').classList.remove('active');
+            document.getElementById('clientName').value = '';
+            render();
+        }
+        
+        async function addInvestment(e) {
+            e.preventDefault();
+            const ticker = document.getElementById('invTicker').value.toUpperCase();
+            const amount = parseFloat(document.getElementById('invAmount').value);
+            const date = document.getElementById('invDate').value;
+            
+            const client = data.clients.find(c => c.id === currentClient);
+            if (!client) return;
+            
+            const url = `https://finnhub.io/api/v1/quote?symbol=${ticker}&token=${API_KEY}`;
+            const res = await fetch(url);
+            const quote = await res.json();
+            
+            if (!quote.c || quote.c === 0) {
+                alert('No se pudo obtener cotización');
+                return;
+            }
+            
+            client.investments.push({
+                id: Date.now().toString(),
+                ticker: ticker,
+                amount: amount,
+                purchaseDate: date,
+                basePrice: quote.c,
+                currentPrice: quote.c,
+                currentValue: amount,
+                stockPercentChange: 0,
+                dailyChange: quote.dp || 0,
+                history: [{
+                    date: new Date().toISOString().split('T')[0],
+                    price: quote.c,
+                    perc: 0
+                }]
+            });
+            
+            console.log(`✅ ${ticker} agregado - Precio base: $${quote.c.toFixed(2)}`);
+            
+            save();
+            document.getElementById('modalInvestment').classList.remove('active');
+            document.getElementById('invTicker').value = '';
+            document.getElementById('invAmount').value = '';
+            document.getElementById('invDate').value = '';
+            
+            render();
+        }
+        
+        async function updateAll() {
+            console.log('🔄 Actualizando...');
+            
+            // Actualizar SPY primero
+            await getSPYPerformance();
+            
+            for (const client of data.clients) {
+                for (const inv of client.investments || []) {
+                    await updateInvestment(inv);
+                }
+            }
+            
+            save();
+            render();
+            checkMarketStatus();
+        }
+        
+        async function updateInvestment(inv) {
+            const url = `https://finnhub.io/api/v1/quote?symbol=${inv.ticker}&token=${API_KEY}`;
+            const res = await fetch(url);
+            const quote = await res.json();
+            
+            if (!quote.c || quote.c === 0) return;
+            
+            inv.currentPrice = quote.c;
+            inv.dailyChange = quote.dp || 0;
+            
+            const perc = ((quote.c - inv.basePrice) / inv.basePrice) * 100;
+            inv.stockPercentChange = perc;
+            inv.currentValue = inv.amount * (1 + perc / 100);
+            
+            console.log(`📊 ${inv.ticker}: $${quote.c.toFixed(2)} (${perc >= 0 ? '+' : ''}${perc.toFixed(2)}%)`);
+            
+            const today = new Date().toISOString().split('T')[0];
+            if (!inv.history) inv.history = [];
+            
+            const last = inv.history[inv.history.length - 1];
+            if (!last || last.date !== today) {
+                inv.history.push({
+                    date: today,
+                    price: quote.c,
+                    perc: perc
+                });
+                if (inv.history.length > 30) inv.history = inv.history.slice(-30);
+            } else {
+                last.price = quote.c;
+                last.perc = perc;
+            }
+        }
+        
+        function checkMarketStatus() {
+            const now = new Date();
+            const utcHours = now.getUTCHours();
+            const utcMinutes = now.getUTCMinutes();
+            const utcDay = now.getUTCDay();
+            
+            const timeInMinutes = utcHours * 60 + utcMinutes;
+            const marketOpen = 13 * 60 + 30;
+            const marketClose = 20 * 60;
+            
+            const isWeekday = utcDay >= 1 && utcDay <= 5;
+            const isDuringHours = timeInMinutes >= marketOpen && timeInMinutes < marketClose;
+            const isOpen = isWeekday && isDuringHours;
+            
+            console.log(`🕐 UTC: ${utcHours}:${utcMinutes.toString().padStart(2, '0')} | Día: ${utcDay} | Mercado: ${isOpen ? 'ABIERTO' : 'CERRADO'}`);
+            
+            const el = document.getElementById('marketStatus');
+            if (isOpen) {
+                el.innerHTML = '<div class="market-badge market-open"><span class="status-dot"></span>Mercado Abierto</div>';
+            } else {
+                el.innerHTML = '<div class="market-badge market-closed"><span class="status-dot"></span>Mercado Cerrado</div>';
+            }
+        }
+        
+        function editClient(id) {
+            const client = data.clients.find(c => c.id === id);
+            if (!client) return;
+            
+            const newName = prompt('Nuevo nombre del cliente:', client.name);
+            if (newName && newName.trim()) {
+                client.name = newName.trim();
+                save();
+                render();
+            }
+        }
+        
+        function deleteClient(id) {
+            const client = data.clients.find(c => c.id === id);
+            if (!client) return;
+            
+            if (confirm(`¿Eliminar cliente "${client.name}" y todas sus inversiones?`)) {
+                data.clients = data.clients.filter(c => c.id !== id);
+                save();
+                render();
+            }
+        }
+        
+        function editInvestment(id) {
+            const client = data.clients.find(c => c.id === currentClient);
+            if (!client) return;
+            
+            const inv = client.investments.find(i => i.id === id);
+            if (!inv) return;
+            
+            const newAmount = prompt('Nuevo capital invertido (USD):', inv.amount);
+            if (newAmount && !isNaN(newAmount)) {
+                inv.amount = parseFloat(newAmount);
+                const perc = inv.stockPercentChange || 0;
+                inv.currentValue = inv.amount * (1 + perc / 100);
+                save();
+                render();
+            }
+        }
+        
+        function deleteInvestment(id) {
+            const client = data.clients.find(c => c.id === currentClient);
+            if (!client) return;
+            
+            const inv = client.investments.find(i => i.id === id);
+            if (inv && confirm(`¿Eliminar inversión ${inv.ticker}?`)) {
+                client.investments = client.investments.filter(i => i.id !== id);
+                save();
+                render();
+            }
+        }
+        
+        function toggleAuto() {
+            autoEnabled = document.getElementById('autoToggle').checked;
+            if (autoEnabled) {
+                startAuto();
+            } else {
+                stopAuto();
+            }
+        }
+        
+        function updateInterval() {
+            autoMinutes = parseInt(document.getElementById('autoInterval').value);
+            if (autoEnabled) {
+                stopAuto();
+                startAuto();
+            }
+        }
+        
+        function startAuto() {
+            stopAuto();
+            autoTimer = setInterval(updateAll, autoMinutes * 60 * 1000);
+        }
+        
+        function stopAuto() {
+            if (autoTimer) clearInterval(autoTimer);
+        }
+        
+        function openAddClient() {
+            document.getElementById('modalClient').classList.add('active');
+        }
+        
+        function openAddInvestment() {
+            document.getElementById('modalInvestment').classList.add('active');
+        }
+        
+        load();
+        checkMarketStatus();
+        updateAll();
+    </script>
+</body>
+</html>
