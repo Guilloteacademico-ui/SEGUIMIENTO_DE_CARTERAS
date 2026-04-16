@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="manifest.json">
+    <title>Portfolio Manager</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        :root {
+            --bg-primary: #000000;
+            --bg-secondary: #1c1c1e;
+            --bg-tertiary: #2c2c2e;
+            --text-primary: #ffffff;
+            --text-secondary: #98989d;
+            --accent-blue: #0a84ff;
+            --accent-green: #30d158;
+            --accent-red: #ff453a;
+            --card-bg: rgba(28, 28, 30, 0.7);
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-bottom: 40px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.2em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #0a84ff, #30d158);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            letter-spacing: -1px;
+        }
+        
+        .header p {
+            font-size: 0.9em;
+            color: var(--text-secondary);
+        }
+        
+        .update-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+        
+        .btn {
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 14px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        
+        .btn:active {
+            transform: scale(0.95);
+            opacity: 0.8;
+        }
+        
+        .auto-update-control {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            background: var(--bg-secondary);
+            padding: 12px 16px;
+            border-radius: 14px;
+            font-size: 0.9em;
+        }
+        
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        select {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.9em;
+        }
+        
+        .dashboard-summary {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .dashboard-summary h2 {
+            font-size: 1.8em;
+            margin-bottom: 16px;
+            font-weight: 700;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
+        
+        .stat-box {
+            background: rgba(255,255,255,0.05);
+            padding: 16px;
+            border-radius: 12px;
+        }
+        
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.85em;
+            margin-bottom: 6px;
+        }
+        
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: 700;
+        }
+        
+        .clients-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .client-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .client-card:active {
+            transform: scale(0.98);
+            opacity: 0.9;
+        }
+        
+        .client-card h3 {
+            font-size: 1.6em;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+        
+        .client-card p {
+            font-size: 1em;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+        
+        .investment-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        
+        .investment-card h3 {
+            font-size: 1.4em;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+        
+        .investment-card p {
+            font-size: 0.95em;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 32px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-content h2 {
+            font-size: 1.8em;
+            margin-bottom: 24px;
+            font-weight: 700;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+        
+        .form-group input {
+            width: 100%;
+            background: var(--bg-tertiary);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 16px;
+            color: var(--text-primary);
+            font-size: 1.05em;
+            -webkit-appearance: none;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.2);
+        }
+        
+        .market-status {
+            text-align: center;
+            padding: 14px;
+            border-radius: 14px;
+            margin: 20px 0;
+            font-weight: 600;
+            font-size: 1em;
+        }
+        
+        .market-open {
+            background: rgba(48,209,88,0.2);
+            color: var(--accent-green);
+        }
+        
+        .market-closed {
+            background: rgba(255,69,58,0.2);
+            color: var(--accent-red);
+        }
+        
+        .history-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+            gap: 8px;
+            max-height: 250px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            margin-top: 12px;
+        }
+        
+        .history-item {
+            text-align: center;
+            padding: 10px 6px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
+        }
+        
+        .history-item div:first-child {
+            font-size: 0.75em;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+        
+        .history-item div:last-child {
+            font-size: 0.85em;
+            font-weight: 700;
+        }
+        
+        /* iOS Safe Area */
+        @supports (padding-top: env(safe-area-inset-top)) {
+            body {
+                padding-top: calc(env(safe-area-inset-top) + 20px);
+                padding-bottom: calc(env(safe-area-inset-bottom) + 20px);
+            }
+        }
+        
+        /* Smooth scrolling */
+        * {
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        /* Larger touch targets for mobile */
+        @media (max-width: 768px) {
+            .btn {
+                min-height: 48px;
+                padding: 14px 24px;
+            }
+            
+            .stat-value {
+                font-size: 1.8em;
+            }
+            
+            .client-card h3 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Portfolio Manager</h1>
+            <p>Gestión inteligente de inversiones • Powered by Finnhub</p>
+        </div>
+        
+        <div id="marketStatus" class="market-status"></div>
+        
+        <div class="update-controls">
+            <button class="btn" onclick="updateAll()">🔄 Actualizar Cotizaciones</button>
+            <div class="auto-update-control">
+                <label><input type="checkbox" id="autoToggle" onchange="toggleAuto()"> Auto</label>
+                <select id="autoInterval" onchange="updateInterval()">
+                    <option value="60">1 hora</option>
+                    <option value="30">30 min</option>
+                    <option value="15">15 min</option>
+                    <option value="5">5 min</option>
+                </select>
+                <span id="autoStatus"></span>
+            </div>
+        </div>
+        
+        <div class="dashboard-summary">
+            <h2>Resumen General</h2>
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-label">Total Invertido</div>
+                    <div class="stat-value" id="totalInvested">$0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Valor Actual</div>
+                    <div class="stat-value" id="totalValue">$0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Rendimiento Promedio</div>
+                    <div class="stat-value" id="totalPerf">0%</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Clientes</div>
+                    <div class="stat-value" id="totalClients">0</div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="clientsView">
+            <div class="clients-grid" id="clientsGrid"></div>
+            <button class="btn" onclick="openAddClient()">+ Agregar Cliente</button>
+        </div>
+        
+        <div id="detailView" style="display:none;">
+            <button class="btn" onclick="showClients()">← Volver</button>
+            <div id="detailContent"></div>
+        </div>
+    </div>
+    
+    <!-- Modal Add Client -->
+    <div id="modalClient" class="modal">
+        <div class="modal-content">
+            <h2>Nuevo Cliente</h2>
+            <form onsubmit="addClient(event)">
+                <div class="form-group">
+                    <label>Nombre</label>
+                    <input type="text" id="clientName" required>
+                </div>
+                <button type="submit" class="btn">Crear</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Modal Add Investment -->
+    <div id="modalInvestment" class="modal">
+        <div class="modal-content">
+            <h2>Nueva Inversión</h2>
+            <form onsubmit="addInvestment(event)">
+                <div class="form-group">
+                    <label>Ticker</label>
+                    <input type="text" id="invTicker" required style="text-transform:uppercase">
+                </div>
+                <div class="form-group">
+                    <label>Capital Invertido (USD)</label>
+                    <input type="number" id="invAmount" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Fecha</label>
+                    <input type="date" id="invDate" required>
+                </div>
+                <button type="submit" class="btn">Guardar</button>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        const API_KEY = 'd7fq5l9r01qqb8rh6vagd7fq5l9r01qqb8rh6vb0';
+        let data = {clients: []};
+        let currentClient = null;
+        let autoTimer = null;
+        let autoEnabled = false;
+        let autoMinutes = 60;
+        
+        // Load
+        function load() {
+            const saved = localStorage.getItem('portfolio');
+            if (saved) data = JSON.parse(saved);
+            render();
+        }
+        
+        // Save
+        function save() {
+            localStorage.setItem('portfolio', JSON.stringify(data));
+        }
+        
+        // Render
+        function render() {
+            if (currentClient) {
+                renderDetail();
+            } else {
+                renderClients();
+                renderSummary();
+            }
+        }
+        
+        // Render Summary
+        function renderSummary() {
+            let invested = 0, value = 0;
+            data.clients.forEach(c => {
+                c.investments?.forEach(inv => {
+                    invested += inv.amount;
+                    value += inv.currentValue || inv.amount;
+                });
+            });
+            const perf = invested > 0 ? ((value - invested) / invested * 100) : 0;
+            
+            document.getElementById('totalInvested').textContent = `$${invested.toFixed(2)}`;
+            document.getElementById('totalValue').textContent = `$${value.toFixed(2)}`;
+            document.getElementById('totalClients').textContent = data.clients.length;
+            
+            const perfEl = document.getElementById('totalPerf');
+            perfEl.textContent = `${perf >= 0 ? '+' : ''}${perf.toFixed(2)}%`;
+            perfEl.style.color = perf >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+        }
+        
+        // Render Clients
+        function renderClients() {
+            const grid = document.getElementById('clientsGrid');
+            if (data.clients.length === 0) {
+                grid.innerHTML = '<p>No hay clientes</p>';
+                return;
+            }
+            
+            grid.innerHTML = data.clients.map(c => {
+                let invested = 0, value = 0;
+                c.investments?.forEach(inv => {
+                    invested += inv.amount;
+                    value += inv.currentValue || inv.amount;
+                });
+                const perf = invested > 0 ? ((value - invested) / invested * 100) : 0;
+                const perfColor = perf >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+                
+                return `
+                    <div class="client-card">
+                        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;">
+                            <h3 onclick="viewClient('${c.id}')" style="flex:1;cursor:pointer;">${c.name}</h3>
+                            <div style="display:flex;gap:8px;">
+                                <button onclick="editClient('${c.id}')" style="background:rgba(255,255,255,0.1);border:none;color:white;padding:6px 10px;border-radius:8px;cursor:pointer;font-size:0.85em;">
+                                    ✏️
+                                </button>
+                                <button onclick="deleteClient('${c.id}')" style="background:rgba(255,69,58,0.2);border:none;color:var(--accent-red);padding:6px 10px;border-radius:8px;cursor:pointer;font-size:0.85em;">
+                                    🗑️
+                                </button>
+                            </div>
+                        </div>
+                        <p onclick="viewClient('${c.id}')" style="cursor:pointer;">Invertido: $${invested.toFixed(2)}</p>
+                        <p onclick="viewClient('${c.id}')" style="color:${perfColor};font-size:2em;font-weight:700;cursor:pointer;">
+                            ${perf >= 0 ? '+' : ''}${perf.toFixed(2)}%
+                        </p>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Render Detail
+        function renderDetail() {
+            const client = data.clients.find(c => c.id === currentClient);
+            if (!client) return;
+            
+            let invested = 0, value = 0;
+            client.investments?.forEach(inv => {
+                invested += inv.amount;
+                value += inv.currentValue || inv.amount;
+            });
+            const perf = invested > 0 ? ((value - invested) / invested * 100) : 0;
+            
+            // Check if market is open
+            const now = new Date();
+            const utc = now.getUTCHours();
+            const day = now.getUTCDay();
+            const isMarketOpen = day >= 1 && day <= 5 && utc >= 13 && utc < 20;
+            const timeLabel = isMarketOpen ? 'hoy' : 'último cierre';
+            
+            const html = `
+                <div class="dashboard-summary">
+                    <h2>${client.name}</h2>
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <div class="stat-label">Invertido</div>
+                            <div class="stat-value">$${invested.toFixed(2)}</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Valor Actual</div>
+                            <div class="stat-value">$${value.toFixed(2)}</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">% Promedio Cartera</div>
+                            <div class="stat-value" style="color:${perf >= 0 ? 'var(--accent-green)' : 'var(--accent-red)'}">
+                                ${perf >= 0 ? '+' : ''}${perf.toFixed(2)}%
+                            </div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">PnL Total</div>
+                            <div class="stat-value" style="color:${perf >= 0 ? 'var(--accent-green)' : 'var(--accent-red)'}">
+                                ${(value - invested) >= 0 ? '+' : ''}$${(value - invested).toFixed(2)}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn" onclick="openAddInvestment()">+ Agregar Inversión</button>
+                <div style="margin-top:20px;">
+                    ${(client.investments || []).map(inv => {
+                        const perc = inv.stockPercentChange || 0;
+                        const color = perc >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+                        const dailyColor = (inv.dailyChange || 0) >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+                        const pnl = (inv.currentValue || inv.amount) - inv.amount;
+                        
+                        return `
+                            <div class="investment-card">
+                                <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                                    <div style="flex:1;">
+                                        <h3>${inv.ticker} 
+                                            <span style="color:${dailyColor};font-size:0.8em">
+                                                ${(inv.dailyChange || 0) >= 0 ? '+' : ''}${(inv.dailyChange || 0).toFixed(2)}% ${timeLabel}
+                                            </span>
+                                        </h3>
+                                    </div>
+                                    <div style="display:flex;gap:8px;">
+                                        <button onclick="editInvestment('${inv.id}')" style="background:rgba(255,255,255,0.1);border:none;color:white;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:0.9em;">
+                                            ✏️
+                                        </button>
+                                        <button onclick="deleteInvestment('${inv.id}')" style="background:rgba(255,69,58,0.2);border:none;color:var(--accent-red);padding:8px 12px;border-radius:8px;cursor:pointer;font-size:0.9em;">
+                                            🗑️
+                                        </button>
+                                    </div>
+                                </div>
+                                <p>Invertido: $${inv.amount.toFixed(2)} | Precio actual: $${(inv.currentPrice || 0).toFixed(2)} | Precio base: $${(inv.basePrice || 0).toFixed(2)}</p>
+                                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;">
+                                    <div>
+                                        <p style="font-size:1.8em;font-weight:700;color:${color}">
+                                            $${(inv.currentValue || inv.amount).toFixed(2)}
+                                        </p>
+                                        <p style="font-size:1.2em;color:${color}">
+                                            ${perc >= 0 ? '+' : ''}${perc.toFixed(2)}% total
+                                        </p>
+                                    </div>
+                                    <div style="text-align:right;">
+                                        <p style="font-size:0.9em;color:var(--text-secondary)">PnL</p>
+                                        <p style="font-size:1.5em;font-weight:700;color:${color}">
+                                            ${pnl >= 0 ? '+' : ''}$${pnl.toFixed(2)}
+                                        </p>
+                                    </div>
+                                </div>
+                                ${inv.history && inv.history.length > 0 ? `
+                                    <div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.1);">
+                                        <p style="color:var(--text-secondary);font-size:0.9em;margin-bottom:8px;">Historial últimos ${inv.history.length} días (% desde compra):</p>
+                                        <div class="history-grid">
+                                            ${inv.history.map(h => {
+                                                const d = new Date(h.date);
+                                                const c = h.perc >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+                                                return `
+                                                    <div class="history-item">
+                                                        <div style="font-size:0.7em;color:var(--text-secondary)">${d.getDate()}/${d.getMonth()+1}</div>
+                                                        <div style="font-size:0.75em;font-weight:600;color:${c}">${h.perc >= 0 ? '+' : ''}${h.perc.toFixed(1)}%</div>
+                                                    </div>
+                                                `;
+                                            }).join('')}
+                                        </div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+            
+            document.getElementById('detailContent').innerHTML = html;
+        }
+        
+        // View Client
+        function viewClient(id) {
+            currentClient = id;
+            document.getElementById('clientsView').style.display = 'none';
+            document.getElementById('detailView').style.display = 'block';
+            render();
+        }
+        
+        // Show Clients
+        function showClients() {
+            currentClient = null;
+            document.getElementById('clientsView').style.display = 'block';
+            document.getElementById('detailView').style.display = 'none';
+            render();
+        }
+        
+        // Add Client
+        function addClient(e) {
+            e.preventDefault();
+            const name = document.getElementById('clientName').value;
+            data.clients.push({
+                id: Date.now().toString(),
+                name: name,
+                investments: []
+            });
+            save();
+            document.getElementById('modalClient').classList.remove('active');
+            document.getElementById('clientName').value = '';
+            render();
+        }
+        
+        // Add Investment
+        async function addInvestment(e) {
+            e.preventDefault();
+            const ticker = document.getElementById('invTicker').value.toUpperCase();
+            const amount = parseFloat(document.getElementById('invAmount').value);
+            const date = document.getElementById('invDate').value;
+            
+            const client = data.clients.find(c => c.id === currentClient);
+            if (!client) return;
+            
+            // Get current price from Finnhub
+            const url = `https://finnhub.io/api/v1/quote?symbol=${ticker}&token=${API_KEY}`;
+            const res = await fetch(url);
+            const quote = await res.json();
+            
+            if (!quote.c || quote.c === 0) {
+                alert('No se pudo obtener cotización');
+                return;
+            }
+            
+            // IMPORTANTE: El precio actual se guarda como precio base
+            // Este será el precio de referencia para calcular ganancias/pérdidas
+            client.investments.push({
+                id: Date.now().toString(),
+                ticker: ticker,
+                amount: amount,
+                purchaseDate: date,
+                basePrice: quote.c, // Precio en el momento que agregaste
+                currentPrice: quote.c,
+                currentValue: amount,
+                stockPercentChange: 0,
+                dailyChange: quote.dp || 0,
+                history: [{
+                    date: new Date().toISOString().split('T')[0],
+                    price: quote.c,
+                    perc: 0 // El primer día siempre es 0%
+                }]
+            });
+            
+            console.log(`✅ ${ticker} agregado - Precio base: $${quote.c.toFixed(2)} (fecha: ${date})`);
+            
+            save();
+            document.getElementById('modalInvestment').classList.remove('active');
+            document.getElementById('invTicker').value = '';
+            document.getElementById('invAmount').value = '';
+            document.getElementById('invDate').value = '';
+            
+            render();
+        }
+        
+        // Update All
+        async function updateAll() {
+            console.log('🔄 Actualizando...');
+            
+            for (const client of data.clients) {
+                for (const inv of client.investments || []) {
+                    await updateInvestment(inv);
+                }
+            }
+            
+            save();
+            render();
+            checkMarketStatus();
+        }
+        
+        // Update Investment
+        async function updateInvestment(inv) {
+            const url = `https://finnhub.io/api/v1/quote?symbol=${inv.ticker}&token=${API_KEY}`;
+            const res = await fetch(url);
+            const quote = await res.json();
+            
+            if (!quote.c || quote.c === 0) return;
+            
+            inv.currentPrice = quote.c;
+            inv.dailyChange = quote.dp || 0;
+            
+            // Calculate % vs base price
+            const perc = ((quote.c - inv.basePrice) / inv.basePrice) * 100;
+            inv.stockPercentChange = perc;
+            inv.currentValue = inv.amount * (1 + perc / 100);
+            
+            console.log(`📊 ${inv.ticker}:`);
+            console.log(`   Precio base: $${inv.basePrice.toFixed(2)}`);
+            console.log(`   Precio actual: $${quote.c.toFixed(2)}`);
+            console.log(`   % cambio: ${perc >= 0 ? '+' : ''}${perc.toFixed(2)}%`);
+            console.log(`   Capital: $${inv.amount.toFixed(2)} → Valor: $${inv.currentValue.toFixed(2)}`);
+            console.log(`   PnL: ${(inv.currentValue - inv.amount) >= 0 ? '+' : ''}$${(inv.currentValue - inv.amount).toFixed(2)}`);
+            
+            // Add to history (1 per day)
+            const today = new Date().toISOString().split('T')[0];
+            if (!inv.history) inv.history = [];
+            
+            const last = inv.history[inv.history.length - 1];
+            if (!last || last.date !== today) {
+                inv.history.push({
+                    date: today,
+                    price: quote.c,
+                    perc: perc
+                });
+                if (inv.history.length > 30) inv.history = inv.history.slice(-30);
+                console.log(`   ✅ Snapshot guardado: ${today}`);
+            } else {
+                // Update today's entry
+                last.price = quote.c;
+                last.perc = perc;
+                console.log(`   🔄 Snapshot actualizado: ${today}`);
+            }
+        }
+        
+        // Check Market Status
+        function checkMarketStatus() {
+            const now = new Date();
+            
+            // Convert to US Eastern Time
+            const utcHours = now.getUTCHours();
+            const utcMinutes = now.getUTCMinutes();
+            const utcDay = now.getUTCDay();
+            
+            // US Market hours: 9:30 AM - 4:00 PM EST
+            // EST = UTC-5, EDT = UTC-4 (daylight saving)
+            // For simplicity, using EDT (UTC-4): 13:30 - 20:00 UTC
+            // Market is open Monday-Friday (1-5)
+            
+            const timeInMinutes = utcHours * 60 + utcMinutes;
+            const marketOpen = 13 * 60 + 30; // 13:30 UTC (9:30 AM EDT)
+            const marketClose = 20 * 60; // 20:00 UTC (4:00 PM EDT)
+            
+            const isWeekday = utcDay >= 1 && utcDay <= 5;
+            const isDuringHours = timeInMinutes >= marketOpen && timeInMinutes < marketClose;
+            const isOpen = isWeekday && isDuringHours;
+            
+            console.log(`🕐 Hora UTC: ${utcHours}:${utcMinutes.toString().padStart(2, '0')}`);
+            console.log(`📅 Día: ${utcDay} (1=Lun, 5=Vie)`);
+            console.log(`🏛️ Mercado: ${isOpen ? 'ABIERTO' : 'CERRADO'}`);
+            
+            const el = document.getElementById('marketStatus');
+            if (isOpen) {
+                el.className = 'market-status market-open';
+                el.textContent = '🟢 Mercado Abierto';
+            } else {
+                el.className = 'market-status market-closed';
+                el.textContent = '🔴 Mercado Cerrado';
+            }
+        }
+        
+        // Auto-update
+        function toggleAuto() {
+            autoEnabled = document.getElementById('autoToggle').checked;
+            if (autoEnabled) {
+                startAuto();
+            } else {
+                stopAuto();
+            }
+        }
+        
+        function updateInterval() {
+            autoMinutes = parseInt(document.getElementById('autoInterval').value);
+            if (autoEnabled) {
+                stopAuto();
+                startAuto();
+            }
+        }
+        
+        function startAuto() {
+            stopAuto();
+            autoTimer = setInterval(updateAll, autoMinutes * 60 * 1000);
+            document.getElementById('autoStatus').textContent = '✅';
+            document.getElementById('autoStatus').style.color = 'var(--accent-green)';
+        }
+        
+        function stopAuto() {
+            if (autoTimer) clearInterval(autoTimer);
+            document.getElementById('autoStatus').textContent = '';
+        }
+        
+        // Edit Client
+        function editClient(id) {
+            const client = data.clients.find(c => c.id === id);
+            if (!client) return;
+            
+            const newName = prompt('Nuevo nombre del cliente:', client.name);
+            if (newName && newName.trim()) {
+                client.name = newName.trim();
+                save();
+                render();
+            }
+        }
+        
+        // Delete Client
+        function deleteClient(id) {
+            const client = data.clients.find(c => c.id === id);
+            if (!client) return;
+            
+            if (confirm(`¿Eliminar cliente "${client.name}" y todas sus inversiones?`)) {
+                data.clients = data.clients.filter(c => c.id !== id);
+                save();
+                render();
+            }
+        }
+        
+        // Edit Investment
+        function editInvestment(id) {
+            const client = data.clients.find(c => c.id === currentClient);
+            if (!client) return;
+            
+            const inv = client.investments.find(i => i.id === id);
+            if (!inv) return;
+            
+            const newAmount = prompt('Nuevo capital invertido (USD):', inv.amount);
+            if (newAmount && !isNaN(newAmount)) {
+                inv.amount = parseFloat(newAmount);
+                // Recalcular valor actual con el nuevo capital
+                const perc = inv.stockPercentChange || 0;
+                inv.currentValue = inv.amount * (1 + perc / 100);
+                save();
+                render();
+            }
+        }
+        
+        // Delete Investment
+        function deleteInvestment(id) {
+            const client = data.clients.find(c => c.id === currentClient);
+            if (!client) return;
+            
+            const inv = client.investments.find(i => i.id === id);
+            if (inv && confirm(`¿Eliminar inversión ${inv.ticker}?`)) {
+                client.investments = client.investments.filter(i => i.id !== id);
+                save();
+                render();
+            }
+        }
+        
+        // Modals
+        function openAddClient() {
+            document.getElementById('modalClient').classList.add('active');
+        }
+        
+        function openAddInvestment() {
+            document.getElementById('modalInvestment').classList.add('active');
+        }
+        
+        window.onclick = (e) => {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.remove('active');
+            }
+        };
+        
+        // Init
+        load();
+        checkMarketStatus();
+        updateAll();
+    </script>
+</body>
+</html>
